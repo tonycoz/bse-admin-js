@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Try &amp; Byte - Edit Article (Level 3)</title>
+    <link rel="stylesheet" href="css/bse-admin/reset.css" type="text/css" />
+    <link rel="stylesheet" href="css/bse-admin/admin.css" type="text/css" />
+    <script type="text/javascript" src="js/prototype.js"></script>
+    <script type="text/javascript" src="js/scriptaculous.js?load=effects"></script>
+    <script type="text/javascript" src="js/bse-admin/admin.js"></script>
+    <!--[if lt IE 9]>
+    <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body data-role="page">
+    <nav id="navbar">
+      <ul id="nav" class="menu global">
+        <li><a href="#">webmaster</a>
+          <ul>
+            <li class="disabled"><span>Adrian Oldham</span></li>
+            <li class="divider"></li>
+            <li><a href="/cgi-bin/admin/logon.pl?a_logoff=1">Log Out</a></li>
+            <li><a href="/cgi-bin/admin/changepw.pl?referer=1">Change Password</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Content</a>
+          <ul>
+            <li><a href="#">Articles</a>
+               <ul>
+                 <li><a href="/cgi-bin/admin/add.pl?id=-1">Manage Articles</a></li>
+                 <li><a href="/cgi-bin/admin/add.pl?level=1&amp;referer=1&amp;parentid=-1">New Article…</a></li>
+                 <li><a href="/cgi-bin/admin/add.pl?_t=load&amp;referer=1">Load Article…</a></li>
+               </ul>
+            </li>
+            <li class="divider"></li>
+            <li><a href="#">Images</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/add.pl?_t=img&amp;id=-1">Manage Site Images</a></li>
+                <li><a href="/cgi-bin/admin/add.pl?_t=imgupload&amp;id=-1&amp;referer=1">New Site Image…</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Files</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/add.pl?_t=file&amp;id=-1">Manage Site Files</a></li>
+                <li><a href="/cgi-bin/admin/add.pl?_t=fileupload&amp;id=-1&amp;referer=1">New Site File…</a></li>
+              </ul>
+            </li>
+            <!-- FIXME: find correct permission name -->
+            <li><a href="#">Tags</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/add.pl?a_tags=1&amp;id=-1">Manage Site Tags</a></li>
+              </ul>
+            </li>
+            <li class="divider"></li>
+            <li><a href="#">Regenerate</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/generate.pl?progress=1">All Site Pages</a></li>
+                <li><a href="/cgi-bin/admin/generate.pl?progress=1&amp;id=extras">Extra System Pages</a></li>
+                <li class="divider"></li>
+                <li><a href="/cgi-bin/admin/makeIndex.pl?verbose=1">Search Index</a></li>
+              </ul>
+            </li>
+            <li><a href="/cgi-bin/admin/add.pl?preview=1&amp;id=1">Preview</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Users</a>
+          <ul>
+            <li><a href="#">Site Users</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/siteusers.pl">Manage Site Users</a></li>
+                <li><a href="/cgi-bin/admin/siteusers.pl?a_addform=1&amp;referer=1">New Site User…</a></li>
+                <li class="divider"></li>
+                <li><a href="/cgi-bin/admin/siteusers.pl?a_grouplist=1">Manage Site Groups</a></li>
+                <li><a href="/cgi-bin/admin/siteusers.pl?a_addgroupform=1">New Site Group…</a></li>
+                <li class="divider"></li>
+                <li><a href="/cgi-bin/admin/siteusers.pl?a_fileaccesslog=1">File Download Log</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Admin Users</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/adminusers.pl">Manage Admin Users</a></li>
+                <li><a href="/cgi-bin/admin/adminusers.pl?a_adduserform=1&amp;referer=1">New Admin User…</a></li>
+                <li class="divider"></li>
+                <li><a href="/cgi-bin/admin/adminusers.pl?a_groups=1">Manage Admin Groups</a></li>
+                <li><a href="/cgi-bin/admin/adminusers.pl?a_addgroupform=1&amp;referer=1">New Admin Group…</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#">Shop</a>
+          <ul>
+            <li><a href="#">Products</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/nadmin.pl/shopadmin">Manage Products</a></li>
+                <li><a href="/cgi-bin/admin/add.pl?type=Product&amp;referer=1&amp;parentid=3">New Product…</a></li>
+                <li><a href="/cgi-bin/admin/add.pl?type=Catalog&amp;referer=1&amp;parentid=3">New Catalog…</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Orders</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/nadmin.pl/shopadmin?order_list=1">Manage Orders</a></li>
+                <li><a href="/cgi-bin/admin/nadmin.pl/shopadmin?template=order_load&amp;order_list=1&amp;referer=1">Load Order…</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+        <li><a href="#">System</a>
+          <ul>
+            <li class="disabled"><span>0.20 GIT v0.20-65-g5f3c8bf</span></li>
+            <li class="divider"></li>
+            <li><a href="/cgi-bin/admin/nadmin.pl/log">System Activity Log</a></li>
+            <!-- FIXME: this is not a real permission name -->
+            <li><a href="/cgi-bin/admin/report.pl">System Reports</a></li>
+            <li><a href="/cgi-bin/admin/backmon.pl">Background Processing</a>
+            <li><a href="/cgi-bin/admin/nadmin.pl/modules">Check Module Versions</a></li>
+            <li><a href="/cgi-bin/admin/pregen.pl">Preview Pregenerated Pages</a></li>
+            <li><a href="/cgi-bin/admin/messages.pl">Manage System Messages</a></li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    
+    <div class="window">
+      <header>
+        <h1>Edit Article (Level 3)</h1>
+        <nav data-role="toolbar">
+          <ul class="menu context">
+            <li><a href="#" data-icon="action" data-icon-only="true" class="button">Actions</a>
+              <ul>
+                <li><a href="/cgi-bin/admin/add.pl?parentid=3532&amp;type=Article" accesskey="a" title="AccessKey = a">New Child…</a></li>
+                <li><a href="/cgi-bin/admin/add.pl?id=3532&amp;_t=steps" accesskey="t" title="AccessKey = t">New Stepchild…</a></li>
+                <li class="divider"></li>
+                <li><a href="/cgi-bin/admin/add.pl?id=3532&amp;_t=imgupload" accesskey="i" title="AccessKey = i">New Image…</a></li>
+                <li><a href="/cgi-bin/admin/add.pl?id=3532&amp;_t=fileupload" accesskey="f" title="AccessKey = f">New File…</a></li>
+                <li class="divider"></li>
+                <li><a href="/cgi-bin/admin/generate.pl?id=3532&amp;r=/cgi-bin/admin/add.pl%3Fid=3532%26m=Article%20regenerated" accesskey="r" title="AccessKey = r">Regenerate</a></li>
+                <li><a href="/cgi-bin/admin/add.pl?id=3532&amp;preview=1">Preview</a></li>
+                <li class="divider"></li>
+                <li><a href="#">Permissions</a>
+                  <ul>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=9">admin (Administrator)</a></li>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=11">duncan (Duncan Wallace)</a></li>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=2">peter (Peter Choi)</a></li>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=3">tryandbyte (Try & Byte)</a></li>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=5">webmaster (Adrian Oldham)</a></li>
+                    <li class="divider"></li>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=4">Content (Manage articles and files)</a></li>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=7">Shop (Manage catalogs, products & orders)</a></li>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=10">System (Maintain system functions)</a></li>
+                    <li><a href="/cgi-bin/admin/adminusers.pl?a_showobjectart=1&amp;id=3532&amp;adminid=6">Users (Access management)</a></li>
+                  </ul>
+                </li>
+                <li class="divider"></li>
+                <li><a href="/cgi-bin/admin/add.pl?id=3532&amp;remove=1&amp;_csrfp=ed8dd6e0b2798a69b527638b42fa2d1a" accesskey="d" title="AccessKey = d" data-object="Article">Delete</a></li>
+              </ul>
+            </li>
+          </ul>
+          <a href="/cgi-bin/admin/add.pl?id=2888" title="Edit Parent" data-icon="back" data-icon-only="true" class="button">Parent</a>
+          <a href="/cgi-bin/admin/add.pl?id=3532&amp;preview=1" title="Preview Article" data-icon="preview" class="button">Preview</a>
+          <a href="/cgi-bin/admin/generate.pl?id=3532&amp;r=/cgi-bin/admin/add.pl%3Fid=3532%26m=Article%20regenerated" accesskey="r" title="AccessKey = r" data-icon="regen" data-icon-only="true" class="button">Regenerate</a>
+          <span data-role="controlgroup">
+          </span>
+          <a href="/cgi-bin/admin/add.pl?id=3532&amp;remove=1&amp;_csrfp=ed8dd6e0b2798a69b527638b42fa2d1a" accesskey="d" title="AccessKey = d" data-object="Article" data-icon="delete" class="button">Delete</a>
+        </nav>
+      </header>
+      <form action="/cgi-bin/admin/add.pl" method="post" enctype="multipart/form-data" data-object="Article">
+        <div id="sheet" class="window dialog modal sheet">
+          <h2>Would you like to save the changes to this <span data-object="placeholder">Object</span>?</h2>
+          <p>If you don‘t save, your changes will be lost.</p>
+          <p class="buttons">
+            <a href="#" class="button white left">Don't Save</a>
+            <a href="#" class="button white">Cancel</a>
+            <a href="#" class="button green">Save Changes</a>
+          </p>
+        </div>
+        <input type="hidden" name="lastModified" value="2012-02-14 02:06:24" />
+        <input type="hidden" name="id" value="3532" />
+        <input type="hidden" name="type" value="Article" />
+        <input type="hidden" name="r" value="" />
+        <input type="hidden" name="_csrfp" value="e2aae944fb207633f755e8f8ff6e905e" />
+        <input type="hidden" name="_csrfp" value="161b704a47c17bec2e997f72b2c9c0ac" />
+        <fieldset>
+          <legend>Content</legend>
+          <div class="full">
+            <label for="title">Title <span class="required">*</span> </label>
+            <span>
+              <input type="text" name="title" id="title" value="foo" maxlength="255" required="required" class="" />
+              <a href="/admin/help/edit.html#title" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on title" /></a>
+            </span>
+          </div>
+          <div>
+            <label for="titleAlias">Title alias </label>
+            <span>
+              <input type="text" name="titleAlias" id="titleAlias" value="" maxlength="60" class="" />
+              <a href="/admin/help/edit.html#titleAlias" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on titleAlias" /></a>
+            </span>
+          </div>
+          <div class="full">
+            <label for="body">Body </label>
+            <span>
+              <textarea name="body" id="body" class=""></textarea>
+              <a href="/admin/help/edit.html#body" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on body" /></a>
+            </span>
+          </div>
+          <div class="full">
+            <label for="summary">Summary </label>
+            <span>
+              <textarea name="summary" id="summary" class=""></textarea>
+              <a href="/admin/help/edit.html#summary" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on summary" /></a>
+            </span>
+          </div>
+          <div>
+            <label for="linkAlias">Link alias </label>
+            <span>
+              <input type="text" name="linkAlias" id="linkAlias" value="" maxlength="255" class="" />
+              <a href="/admin/help/edit.html#linkAlias" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on linkAlias" /></a>
+            </span>
+          </div>
+          <ul class="meta data">
+            <li><span>Created</span> 14-Feb-2012 at 02:06:24 AM</li>
+            <li><span>Created by</span> webmaster</li>
+            <li><span>Modified</span> 14-Feb-2012 at 02:06:24 AM</li>
+            <li><span>Modified by</span> webmaster</li>
+          </ul>
+        </fieldset>
+        <details>
+          <summary>More attributes</summary>
+          <fieldset>
+            <legend>Structure</legend>
+            <div>
+              <label for="parentid">Parent </label>
+              <span>
+                <select name="parentid" id="parentid">
+                  <option value="">Please select a Article L2</option>
+                  <option value="2">[rss generation] (2)</option>
+                  <option value="4">[sidebar section] (4)</option>
+                  <option value="10">[footer section] (10)</option>
+                  <option value="2665">Bluelounge Stockists (2665)</option>
+                  <option value="2694">Twelve South Stockists (2694)</option>
+                  <option value="2705">Welcome to Try and Byte (2705)</option>
+                  <option value="2711">iSkin Stockists (2711)</option>
+                  <option value="2714">Vestalife Stockists (2714)</option>
+                  <option value="2715">Try and Byte Christmas Trading Hours (2715)</option>
+                  <option value="2776">Blue Microphones Stockists (2776)</option>
+                  <option value="2777">H2O Audio Stockists (2777)</option>
+                  <option value="2888" selected="selected">Featured (2888)</option>
+                  <option value="1">-- move up a level -- Home (1)</option>
+                </select>
+                <a href="/admin/help/edit.html#section" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on section" /></a>
+              </span>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Categorisation </legend>
+            <div>
+              <label for="category">Category </label>
+              <span>
+                <select name="category" id="category">
+                  <option value="" selected="selected">(None)</option>
+                </select>
+                <a href="/admin/help/edit.html#category" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on category" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="tag">Tag name </label>
+              <span>
+                <input type="hidden" name="_save_tags" value="1" />
+                <input type="text" name="tags" id="tag" value="" class="" />
+                <a href="/admin/help/edit.html#tags" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on tags" /></a>
+              </span>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Presentation</legend>
+            <div>
+              <label for="template">Template </label>
+              <span>
+                <select name="template" id="template"><option value="common/default.tmpl" selected="selected">common/default.tmpl</option>
+                  <option value="common/dyndefault.tmpl">common/dyndefault.tmpl</option>
+                  <option value="common/gallery.tmpl">common/gallery.tmpl</option>
+                  <option value="common/table.tmpl">common/table.tmpl</option>
+                </select>
+                <a href="/admin/help/edit.html#template" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on template" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="force_dynamic">Page display </label>
+              <span>
+                <input type="hidden" name="save_force_dynamic" value="1" />
+                <select name="force_dynamic" id="force_dynamic" >
+                  <option value="">Static</option>
+                  <option value="1">Dynamic</option>
+                </select>
+                <a href="/admin/help/edit.html#force_dynamic" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on force_dynamic" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="summaryLength">Summary length </label>
+              <span>
+                <input type="text" name="summaryLength" id="summaryLength" value="" placeholder="characters" maxlength="10" class="" />
+                <a href="/admin/help/edit.html#summaryLength" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on summaryLength" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="threshold">Embed threshold </label>
+              <span>
+                <input type="text" name="threshold" id="threshold" value="" placeholder="children" maxlength="10" class="" />
+                <a href="/admin/help/edit.html#threshold" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on threshold" /></a>
+              </span>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Publication</legend>
+            <div>
+              <label for="listed">List article </label>
+              <span>
+                <select name="listed" id="listed"><option value="0">No</option>
+                  <option value="1" selected="selected">Yes</option>
+                  <option value="2">In content, but not menus</option>
+                </select>
+                <a href="/admin/help/edit.html#listed" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on listed" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="release">Release date </label>
+              <span>
+                <input type="text" name="release" id="release" value="14/02/2012" placeholder="DD/MM/YYYY" maxlength="10" class="" />
+                <a href="/admin/help/edit.html#listed" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on listed" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="expire">Expiry date </label>
+              <span>
+                <input type="text" name="expire" id="expire" value="" placeholder="DD/MM/YYYY" maxlength="10" class="" />
+                <a href="/admin/help/edit.html#expire" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on expire" /></a>
+              </span>
+            </div>
+          </fieldset>
+          <fieldset>
+            <legend>Access </legend>
+            <ul>
+              <li>
+                <input type="hidden" name="save_group_id" value="1" />
+                <input type="checkbox" name="group_id" id="group_id1" value="1" />
+                <label for="group_id1"><a href="/cgi-bin/admin/siteusers.pl?a_groupmemberform=1&amp;id=1&amp;referer=1">Funky Bunch</a></label>
+              </li>
+            </ul>
+            <a href="/admin/help/edit.html#groups" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on groups" /></a>
+          </fieldset>
+          <fieldset>
+            <legend>Flags </legend>
+            <ul>
+              <li>
+                <input type="checkbox" name="flags" id="flags_B" value="B" />
+                <label for="flags_B">Allow browser caching (dynamic pages only)</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_R" value="R" />
+                <label for="flags_R">Always pregenerate article cache (dynamic pages only)</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_F" value="F" />
+                <label for="flags_F">Descendants inherit dynamic page display (dynamic pages only)</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_D" value="D" />
+                <label for="flags_D">Disable linking to this article</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_A" value="A" />
+                <label for="flags_A">Disallow browser caching (dynamic pages only)</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_N" value="N" />
+                <label for="flags_N">Don’t index even if listed</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_C" value="C" />
+                <label for="flags_C">Don’t index this article or it’s descendants</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_t" value="t" />
+                <label for="flags_t">Enable tabs for embedded children</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_l" value="l" />
+                <label for="flags_l">Hide child list from this article display</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_h" value="h" />
+                <label for="flags_h">Hide file list from this article display</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_I" value="I" />
+                <label for="flags_I">Index even if hidden</label>
+              </li>
+              <li>
+                <input type="checkbox" name="flags" id="flags_P" value="P" />
+                <label for="flags_P">Links to this article use parent url</label>
+              </li>
+            </ul>
+            <a href="/admin/help/edit.html#flags" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on flags" /></a>
+          </fieldset>
+          <fieldset>
+            <legend>Metadata</legend>
+            <div>
+              <label for="pageTitle">Page title </label>
+              <span>
+                <input type="text" name="pageTitle" id="pageTitle" value="" maxlength="255" class="" />
+                <a href="/admin/help/edit.html#pageTitle" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on pageTitle" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="metaDescription">Meta description </label>
+              <span>
+                <input type="text" name="metaDescription" id="metaDescription" value="" maxlength="255" class="" />
+                <a href="/admin/help/edit.html#metaDescription" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on metaDescription" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="metaKeywords">Meta keywords </label>
+              <span>
+                <input type="text" name="metaKeywords" id="metaKeywords" value="" placeholder="comma separated" maxlength="255" class="" />
+                <a href="/admin/help/edit.html#metaKeywords" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on metaKeywords" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="author">Author name </label>
+              <span>
+                <input type="text" name="author" id="author" value="" maxlength="255" class="" />
+                <a href="/admin/help/edit.html#author" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on author" /></a>
+              </span>
+            </div>
+            <div>
+              <label for="keyword">Local keywords </label>
+              <span>
+                <input type="text" name="keyword" id="keyword" value="" placeholder="comma separated" maxlength="255" class="" />
+                <a href="/admin/help/edit.html#keyword" target="_blank" class="help"><img src="images/bse-admin/help.gif" width="16" height="16" alt="Help on keyword" /></a>
+              </span>
+            </div>
+          </fieldset>
+        </details>
+        <p class="buttons">
+          <a href="/cgi-bin/admin/add.pl?id=2888" accesskey="." title="AccessKey = ." class="button white">Done</a>
+          <input type="submit" name="save" value="Save Changes" accesskey="s" title="AccessKey = s" class="button green" />
+        </p>
+      </form>
+    </div>
+    <div id="lightbox" class="lightbox">
+      <div class="window dialog modal">
+        <header>
+          <h1>Alert!</h1>
+        </header>
+        <h2 id="confirmMessage">Are you sure you want to delete this <span data-object="placeholder">Object</span>?</h2>
+        <p id="confirmInformation">If you choose delete, this <span data-object="placeholder">Object</span> will be permenantly removed from your site. This action cannot be undone.</p>
+        <p class="buttons">
+          <a href="#" id="confirmCancel" class="button white">Cancel</a>
+          <a href="#" id="confirmDelete" class="button red">Delete <span data-object="placeholder">Object</span></a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
