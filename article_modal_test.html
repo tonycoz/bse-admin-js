@@ -164,13 +164,13 @@
         </nav>
       </header>
       <form action="/cgi-bin/admin/add.pl" method="post" enctype="multipart/form-data" data-object="Article">
-        <div id="sheet" class="window dialog modal sheet">
+        <div id="sheet" class="window dialog modal sheet" style="display: none">
           <h2>Would you like to save the changes to this <span data-object="placeholder">Object</span>?</h2>
           <p>If you don‘t save, your changes will be lost.</p>
           <p class="buttons">
-            <a href="#" class="button white left">Don't Save</a>
-            <a href="#" class="button white">Cancel</a>
-            <a href="#" class="button green">Save Changes</a>
+            <a href="#" class="button white left" id="unsavedDont">Don't Save</a>
+            <a href="#" class="button white" id="unsavedCancel">Cancel</a>
+            <a href="#" class="button green" id="unsavedSave">Save Changes</a>
           </p>
         </div>
         <input type="hidden" name="lastModified" value="2012-02-14 02:06:24" />

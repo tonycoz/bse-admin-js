@@ -3,6 +3,7 @@ var FormMonitorElements;
 var FormMonitor = Class.create({
     initialize: function(options) {
 	this.invalid_count = 0;
+	this.changes = 0;
 	this._make_handlers();
 	this.options = Object.extend(this.defaults(), options || {});
 	this._form = $(this.options.form);
@@ -23,6 +24,9 @@ var FormMonitor = Class.create({
 		if (!data.valid) {
 		    ++this.invalid_count;
 		}
+		if (data.changed) {
+		    ++this.changes;
+		}
 		    
 		return data;
 	    }.bind(this))
@@ -35,9 +39,6 @@ var FormMonitor = Class.create({
 	if (this.options.onsubmit != null) {
 	    this._form.observe("submit", this.onsubmit);
 	}
-	if (this.options.onleave != null)
-	{ } // nothing yet
-	this.changes = 0;
     },
     defaults: function() {
 	return Object.extend({}, {
@@ -45,8 +46,7 @@ var FormMonitor = Class.create({
 	    submits: "input[type=submit]",
 	    typemap: FormMonitorElements,
 	    onchanged: null,
-	    onsubmit: null,
-	    onleave: null
+	    onsubmit: null
 	});
     },
     _make_handlers: function() {
@@ -117,6 +117,7 @@ FormMonitor.Element.Base = Class.create({
 FormMonitor.Element.Value = Class.create(FormMonitor.Element.Base, {
     start: function(data, monitor) {
 	data.value = data.element.defaultValue;
+	data.changed = data.element.value != data.value;
     },
     changed: function(data) {
 	return data.value != data.element.value;
@@ -200,9 +201,12 @@ FormMonitorElements = (function() {
 var FormsMonitor = Class.create({
     initialize: function(options) {
 	this.options = Object.extend(this.defaults(), options || {});
-	this.forms = $$(this.options.forms).map(function(form) {
+	this._forms = $$(this.options.forms).map(function(form) {
 	    return new this.options.formClass(Object.extend({ form: form }, this.options));
 	}.bind(this));
+    },
+    forms: function() {
+	return this._forms;
     },
     defaults: function() {
 	return Object.extend({}, {
@@ -212,21 +216,13 @@ var FormsMonitor = Class.create({
     }
 });
 
-var FormChangeMonitor = Class.create({
-    initialize: function(options) {
-	this.options = Object.extend(this.defaults(), options);
-	var form = $(options.form);
-	this.options.onleave = this._onleave.bind(this); 
-	this.monitor = new FormMonitor(this.options);
+var FormChangeMonitor = Class.create(FormMonitor, {
+    initialize: function($super, options) {
+	options = Object.extend(this.defaults(), options || {});
+	$super(options);
     },
-    _onleave: function(ev, monitor) {
-	if (monitor.changed()) {
-	    ev.returnValue = "Unsaved changes - are you sure?";
-	    return "Unsaved changes - are you sure?";
-	}
-    },
-    defaults: function() {
-	return {
+    defaults: function($super) {
+	return Object.extend($super(), {
 	    onformchange: function(monitor) {
 		if (monitor.changed() && monitor.valid()) {
 		    monitor.submits().each(function(submit) {
@@ -238,22 +234,82 @@ var FormChangeMonitor = Class.create({
 			submit.disable();
 		    });
 		}
-	    },
-	    onsubmit: function(ev, monitor) {
 	    }
-	};
+	});
     }
 });
 
-// use FormsMonitor to control submit and changes
 var ChangesMonitor = Class.create({
     initialize: function(options) {
 	this.options = Object.extend(this.defaults(), options);
 	this.monitor = new FormsMonitor(this.options);
+	if (this.options.links) {
+	    var handler = this._onleave.bind(this);
+	    var links = $$(this.options.links);
+	    links.invoke('observe', 'click', handler);
+	}
+    },
+    _onleave: function(ev) {
+	// find the first form with unsaved changes
+	var found;
+	var forms = this.monitor.forms();
+	for (var i = 0; i < forms.length && found == null; ++i) {
+	    if (forms[i].changed()) {
+		found = forms[i];
+	    }
+	}
+	if (found) {
+	    ev.stop();
+	    this.prompt(found, ev.element());
+	}
+    },
+    prompt: function(form, link) {
+	var ele = $(this.options.prompt);
+	this.options.replace.each(function(name) {
+	    var attr = "data-" + name;
+	    var val = form.form().getAttribute(attr);
+	    if (val) {
+		ele.select("["+attr+"]").invoke('update', val);
+	    }
+	});
+	var save = $(this.options.saveButton);
+	var cancel = $(this.options.cancelButton);
+	var dontsave = $(this.options.dontSaveButton);
+
+	// avoid recursing in
+	save.stopObserving('click');
+	cancel.stopObserving('click');
+	dontsave.stopObserving('click');
+
+	if (form.valid()) {
+	    save.removeClassName("disabled");
+	    save.observe('click', function() {
+		form.form().submit();
+	    }.bind(this));
+	}
+	else {
+	    save.addClassName("disabled");
+	}
+
+	cancel.observe('click', function(ev) {
+	    ev.stop();
+	    ele.hide();
+	    save.stopObserving('click');
+	    cancel.stopObserving('click');
+	}.bind(this));
+
+	dontsave.href = link.href;
+	ele.setStyle({display:"block"});
     },
     defaults: function() {
 	return {
-	    formClass: FormChangeMonitor
+	    formClass: FormChangeMonitor,
+	    links: 'a[href]:not([data-action])',
+	    prompt: 'sheet',
+	    replace: [ "object", "confirm" ],
+	    dontSaveButton: 'unsavedDont',
+	    cancelButton: 'unsavedCancel',
+	    saveButton: 'unsavedSave'
 	};
     }
 });
