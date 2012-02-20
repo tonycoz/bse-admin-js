@@ -35,7 +35,20 @@ var FormMonitor = Class.create({
 	if (this.options.onsubmit != null) {
 	    this._form.observe("submit", this.onsubmit);
 	}
-	if (this.options.onleave != null)
+	if (this.options.onleave != null) {
+	    var handler = function(ev) {
+		if (this.changed()) {
+		    ev.stop();
+		    return this.options.onleave(ev, this);
+		}
+	    }.bind(this);
+	    if (window.addEventListener) {
+		window.addEventListener("beforeunload", handler);
+	    }
+	    else if (window.attachEvent) {
+		window.attachEvent("beforeunload", handler);
+	    }
+	}
 	{ } // nothing yet
 	this.changes = 0;
     },
