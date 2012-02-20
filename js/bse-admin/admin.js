@@ -4,6 +4,7 @@
 document.write('<script type="text/javascript" src="js/bse-admin/dropmenu.js"></script>');
 document.write('<script type="text/javascript" src="js/bse-admin/opendetails.js"></script>');
 document.write('<script type="text/javascript" src="js/bse-admin/form-monitor.js"></script>');
+document.write('<script type="text/javascript" src="js/bse-admin/link-confirmer.js"></script>');
 
 // wait for DOM to load before initialising
 
@@ -82,7 +83,8 @@ function dom_init() {
     //     });
     // });
     var form_mon = new ChangesMonitor();
-
+    
+    var confirmer = new LinkConfirmer();
 };
 
 function window_init() {
