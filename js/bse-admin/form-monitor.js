@@ -78,6 +78,7 @@ var FormMonitor = Class.create({
 	    else if (!new_valid && entry.valid) {
 		++this.invalid_count;
 	    }
+	    entry.valid = new_valid;
 	    var changed = old_changes == 0 && this.changes != 0
 		|| old_changes != 0 && this.changes == 0;
 	    var valid_change = old_invalid_count == 0 && this.invalid_count != 0
