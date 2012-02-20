@@ -201,21 +201,29 @@ var FormsMonitor = Class.create({
     initialize: function(options) {
 	this.options = Object.extend(this.defaults(), options || {});
 	this.forms = $$(this.options.forms).map(function(form) {
-	    return new FormMonitor(Object.extend({ form: form }, this.options));
+	    return new this.options.formClass(Object.extend({ form: form }, this.options));
 	}.bind(this));
     },
     defaults: function() {
 	return Object.extend({}, {
-	    forms: "form"
+	    forms: "form",
+	    formClass: FormMonitor
 	});
     }
 });
 
-// use FormsMonitor to control submit and changes
-var ChangeMonitor = Class.create({
+var FormChangeMonitor = Class.create({
     initialize: function(options) {
 	this.options = Object.extend(this.defaults(), options);
-	this.monitor = new FormsMonitor(this.options);
+	var form = $(options.form);
+	this.options.onleave = this._onleave.bind(this); 
+	this.monitor = new FormMonitor(this.options);
+    },
+    _onleave: function(ev, monitor) {
+	if (monitor.changed()) {
+	    ev.returnValue = "Unsaved changes - are you sure?";
+	    return "Unsaved changes - are you sure?";
+	}
     },
     defaults: function() {
 	return {
@@ -231,10 +239,21 @@ var ChangeMonitor = Class.create({
 		    });
 		}
 	    },
-	    onleave: function(monitor) {
-	    },
 	    onsubmit: function(ev, monitor) {
 	    }
+	};
+    }
+});
+
+// use FormsMonitor to control submit and changes
+var ChangesMonitor = Class.create({
+    initialize: function(options) {
+	this.options = Object.extend(this.defaults(), options);
+	this.monitor = new FormsMonitor(this.options);
+    },
+    defaults: function() {
+	return {
+	    formClass: FormChangeMonitor
 	};
     }
 });

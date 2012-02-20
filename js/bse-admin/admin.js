@@ -81,7 +81,7 @@ function dom_init() {
     //         });
     //     });
     // });
-    var form_mon = new ChangeMonitor();
+    var form_mon = new ChangesMonitor();
 
 };
 
