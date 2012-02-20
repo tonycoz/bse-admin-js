@@ -3,6 +3,7 @@
 //document.write('<script type="text/javascript" src="/js/combo.packed.js"></script>');
 document.write('<script type="text/javascript" src="js/bse-admin/dropmenu.js"></script>');
 document.write('<script type="text/javascript" src="js/bse-admin/opendetails.js"></script>');
+document.write('<script type="text/javascript" src="js/bse-admin/form-monitor.js"></script>');
 
 // wait for DOM to load before initialising
 
@@ -42,44 +43,45 @@ function dom_init() {
 
     fixIeFields();
 
-    $$("[data-object]:not([data-object=placeholder])").each(function(element) {
-        element.observe('click', function(event) {
-            var element = event.element();
-            var message = element.getAttribute("data-confirm");
-            var object = element.getAttribute("data-object");
+    // $$("[data-object]:not([data-object=placeholder])").each(function(element) {
+    //     element.observe('click', function(event) {
+    //         var element = event.element();
+    //         var message = element.getAttribute("data-confirm");
+    //         var object = element.getAttribute("data-object");
 
 
-            $("lightbox").setStyle({display: "block"});
-            $$("#lightbox [data-object=placeholder]").invoke('update', object);
+    //         $("lightbox").setStyle({display: "block"});
+    //         $$("#lightbox [data-object=placeholder]").invoke('update', object);
             
-            if(message) {
-                $("confirmMessage").update(message);
-            }
-            $("confirmDelete").setAttribute("href", element.href);
-            $("confirmCancel").observe('click', function(event) {
-                $("lightbox").hide();
-                event.stopPropagation();
-                event.preventDefault();
-            });
+    //         if(message) {
+    //             $("confirmMessage").update(message);
+    //         }
+    //         $("confirmDelete").setAttribute("href", element.href);
+    //         $("confirmCancel").observe('click', function(event) {
+    //             $("lightbox").hide();
+    //             event.stopPropagation();
+    //             event.preventDefault();
+    //         });
             
-            event.stopPropagation();
-            event.preventDefault();
-        });
-    });
+    //         event.stopPropagation();
+    //         event.preventDefault();
+    //     });
+    // });
 
-    $$("input[type=submit]").each(function(element) {
-        var submit = element;
-        var form = element.up("form");
-        var inputs = form.getElements(":not([type=hidden])");
+    // $$("input[type=submit]").each(function(element) {
+    //     var submit = element;
+    //     var form = element.up("form");
+    //     var inputs = form.getElements(":not([type=hidden])");
 
-        submit.disable();
+    //     submit.disable();
         
-        inputs.each(function(input) {
-            input.observe("change", function() {
-                submit.enable();
-            });
-        });
-    });
+    //     inputs.each(function(input) {
+    //         input.observe("change", function() {
+    //             submit.enable();
+    //         });
+    //     });
+    // });
+    var form_mon = new ChangeMonitor();
 
 };
 

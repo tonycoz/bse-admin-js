@@ -1,0 +1,42 @@
+=head1 FUNCTIONALITY
+
+Adz is looking for:
+
+=over
+
+=item 1.
+
+Save button enabled only once the user has changed something
+
+=item 2.
+
+alert user on navigate away with unsaved changes
+
+=item 3.
+
+delete query popup
+
+=back
+
+1 and 2 are related in that they both need to track changes.
+
+=head1 Issues & maybe solutions
+
+=head2 Tracking changes
+
+=head3 Conceptual problems
+
+BSE redisplays the form with entries from the user on validation
+errors, so in fact the value are conceptually changed from what the
+system has, but the form tool has no way to tell that.
+
+But given the values are invalid, the user will need to make a change
+to proceed anyway.
+
+Another but, they may change values to match the values the back end
+has stored,so we'll be allowing a Save that does no actual work, and
+prompt the user about losing changes that make no actualy change.
+
+=head3 Individual fields
+
+JS doesn't notify us on every little change, but we need to 
