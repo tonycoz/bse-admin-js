@@ -35,10 +35,10 @@ var FormMonitor = Class.create({
 	    }.bind(this));
 
 	this._submits = this._form.select(this.options.submits);
-	this._submits.each(function(submit) { submit.disable() });
 	if (this.options.onsubmit != null) {
 	    this._form.observe("submit", this.onsubmit);
 	}
+	this.options.onformchange(this);
     },
     defaults: function() {
 	return Object.extend({}, {
