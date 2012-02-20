@@ -2,6 +2,7 @@ var FormMonitorElements;
 
 var FormMonitor = Class.create({
     initialize: function(options) {
+	this.invalid_count = 0;
 	this._make_handlers();
 	this.options = Object.extend(this.defaults(), options || {});
 	this._form = $(this.options.form);
@@ -18,6 +19,11 @@ var FormMonitor = Class.create({
 		handler.start(data, this);
 		element.observe("focus", this.onfocus);
 		element.observe("blur", this.onblur);
+		data.valid = handler.valid(data);
+		if (!data.valid) {
+		    ++this.invalid_count;
+		}
+		    
 		return data;
 	    }.bind(this))
 	    .each(function(data) {
@@ -39,7 +45,6 @@ var FormMonitor = Class.create({
 	    submits: "input[type=submit]",
 	    typemap: FormMonitorElements,
 	    onchanged: null,
-	    onunchanged: null,
 	    onsubmit: null,
 	    onleave: null
 	});
@@ -65,13 +70,20 @@ var FormMonitor = Class.create({
 		--this.changes;
 	    }
 	    entry.changed = new_changed;
-	    if (this.options.onchanged != null && old_changes == 0
-		&& this.changes != 0) {
-		this.options.onchanged(this);
+	    var new_valid = entry.handler.valid(entry);
+	    var old_invalid_count = this.invalid_count;
+	    if (new_valid && !entry.valid) {
+		--this.invalid_count;
 	    }
-	    else if (this.options.onunchanged != null && old_changes != 0
-		     && this.changes == 0) {
-		this.options.onunchanged(this);
+	    else if (!new_valid && entry.valid) {
+		++this.invalid_count;
+	    }
+	    var changed = old_changes == 0 && this.changes != 0
+		|| old_changes != 0 && this.changes == 0;
+	    var valid_change = old_invalid_count == 0 && this.invalid_count != 0
+		|| old_invalid_count != 0 && this.invalid_count == 0;
+	    if (this.options.onformchange != null && (changed || valid_change)) {
+		this.options.onformchange(this);
 	    }
 	}.bind(this);
 	this.onsubmit = function(ev) {
@@ -89,16 +101,27 @@ var FormMonitor = Class.create({
     },
     changed: function() {
 	return this.changes != 0;
+    },
+    valid: function() {
+	return this.invalid_count == 0;
     }
 });
 
 FormMonitor.Element = {};
-FormMonitor.Element.Value = Class.create({
+FormMonitor.Element.Base = Class.create({
+    valid: function(data) {
+	return true;
+    }
+});
+FormMonitor.Element.Value = Class.create(FormMonitor.Element.Base, {
     start: function(data, monitor) {
 	data.value = data.element.defaultValue;
     },
     changed: function(data) {
 	return data.value != data.element.value;
+    },
+    valid: function(data) {
+	return !data.element.required || data.element.value != "";
     },
     onfocus: function(data, monitor) {
 	data.element.observe("change", monitor.onchange);
@@ -110,7 +133,7 @@ FormMonitor.Element.Value = Class.create({
     },
 });
 
-FormMonitor.Element.Button = Class.create({
+FormMonitor.Element.Button = Class.create(FormMonitor.Element.Base, {
     start: function(data, monitor) {
 	data.element.observe("click", monitor.onchange);
 	data.checked = data.element.defaultChecked;
@@ -122,7 +145,7 @@ FormMonitor.Element.Button = Class.create({
     onblur: function() {}
 });
 
-FormMonitor.Element.SelectOne = Class.create({
+FormMonitor.Element.SelectOne = Class.create(FormMonitor.Element.Base, {
     start: function(data, monitor) {
 	data.element.observe("click", monitor.onchange);
 	data.selection = data.element.selectedIndex;
@@ -140,7 +163,7 @@ FormMonitor.Element.SelectOne = Class.create({
     }
 });
 
-FormMonitor.Element.SelectMultiple = Class.create({
+FormMonitor.Element.SelectMultiple = Class.create(FormMonitor.Element.Base, {
     start: function(data, monitor) {
 	data.element.observe("click", monitor.onchange);
 	data.selection = data.element.getValue();
@@ -195,15 +218,17 @@ var ChangeMonitor = Class.create({
     },
     defaults: function() {
 	return {
-	    onchanged: function(monitor) {
-		monitor.submits().each(function(submit) {
-		    submit.enable();
-		});
-	    },
-	    onunchanged: function(monitor) {
-		monitor.submits().each(function(submit) {
-		    submit.disable();
-		});
+	    onformchange: function(monitor) {
+		if (monitor.changed() && monitor.valid()) {
+		    monitor.submits().each(function(submit) {
+			submit.enable();
+		    });
+		}
+		else {
+		    monitor.submits().each(function(submit) {
+			submit.disable();
+		    });
+		}
 	    },
 	    onleave: function(monitor) {
 	    },
