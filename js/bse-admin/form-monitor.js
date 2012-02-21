@@ -20,6 +20,7 @@ var FormMonitor = Class.create({
 		handler.start(data, this);
 		element.observe("focus", this.onfocus);
 		element.observe("blur", this.onblur);
+		element.observe("change", this.onchange);
 		data.valid = handler.valid(data);
 		if (!data.valid) {
 		    ++this.invalid_count;
@@ -126,11 +127,9 @@ FormMonitor.Element.Value = Class.create(FormMonitor.Element.Base, {
 	return !data.element.required || data.element.value != "";
     },
     onfocus: function(data, monitor) {
-	data.element.observe("change", monitor.onchange);
 	data.element.observe("keyup", monitor.onchange);
     },
     onblur: function(data, monitor) {
-	data.element.stopObserving("change", monitor.onchange);
 	data.element.stopObserving("keyup", monitor.onchange);
     },
 });
@@ -156,11 +155,9 @@ FormMonitor.Element.SelectOne = Class.create(FormMonitor.Element.Base, {
 	return data.selection != data.element.selectedIndex;
     },
     onfocus: function(data, monitor) {
-	data.element.observe("change", monitor.onchange);
 	data.element.observe("keyup", monitor.onchange);
     },
     onblur: function(data, monitor) {
-	data.element.stopObserving("change", monitor.onchange);
 	data.element.stopObserving("keyup", monitor.onchange);
     }
 });
