@@ -8,6 +8,8 @@ var FormMonitor = Class.create({
 	this.options = Object.extend(this.defaults(), options || {});
 	this._form = $(this.options.form);
 	this._elements = {};
+	this._first = null;
+	this._focus = null;
 	this._form.select(this.options.inputs)
 	    .map(function(element) {
 		var handler = this.options.typemap[element.type]
@@ -28,6 +30,12 @@ var FormMonitor = Class.create({
 		if (data.changed) {
 		    ++this.changes;
 		}
+		if (!this._first) {
+		    this._first = element;
+		}
+		if (element.autofocus) {
+		    this._focus = element;
+		}
 		    
 		return data;
 	    }.bind(this))
@@ -38,6 +46,13 @@ var FormMonitor = Class.create({
 	this._submits = this._form.select(this.options.submits);
 	if (this.options.onsubmit != null) {
 	    this._form.observe("submit", this.onsubmit);
+	}
+	if (!this._focus && this._first) {
+	    this._focus = this._first;
+	}
+	if (this._focus) {
+	    var ev = { target: this._focus }; // cheat
+	    this.onfocus(ev);
 	}
 	this.options.onformchange(this);
     },
@@ -52,6 +67,7 @@ var FormMonitor = Class.create({
     },
     _make_handlers: function() {
 	this.onfocus = function(ev) {
+	    this._focus = ev.target;
 	    var entry = this._elements[ev.target.identify()];
 	    entry.handler.onfocus(entry, this);
 	}.bind(this);
